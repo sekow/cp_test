@@ -1,0 +1,28 @@
+use GizmoType;
+use Xfo;
+use Color;
+
+/*
+  types used:
+  RT/Geometry/GizmoType.kl
+  RT/Geometry/InlineGeometryType.kl
+*/
+
+operator gizmoTransformOp(
+  Index index,
+  Xfo globalXfo,
+  Integer mode,
+  io GizmoType gizmo
+) {
+
+  // reset the content of the gizmo
+  gizmo.reset();
+
+  // draw based on the mode
+  if(mode == 0) {
+    Vec3 startPt = globalXfo.transformVector(Vec3(0, -5, 0));
+    Vec3 endPt = globalXfo.transformVector(Vec3(0, 5, 0));
+    gizmo.geometry.drawLine(startPt, endPt, Color(1.0, 0.0, 0.0, 1.0));
+    gizmo.endGizmo(globalXfo, 'redLine', index, 0);
+  }
+}
