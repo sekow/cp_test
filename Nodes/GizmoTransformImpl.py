@@ -1,5 +1,6 @@
 from FabricEngine.CreationPlatform.Nodes.Kinematics import *
 from FabricEngine.CreationPlatform.RT.Geometry.GizmoTypeImpl import GizmoType
+from FabricEngine.CreationPlatform.RT.Math import *
 from FabricEngine.CreationPlatform.Nodes.Manipulation.GizmoInstanceImpl import GizmoInstance
 from FabricEngine.CreationPlatform.Nodes.Manipulation.GizmoManipulatorImpl import GizmoManipulator
 
@@ -82,16 +83,41 @@ class GizmoTransform(Transform):
     # compute the new point on the plane (again, dependent on the type of gizmo)
     viewport = event['viewport']
     ray = viewport.calcRayFromMouseEvent(event)
-    point = ray.pointFromFactor(ray.intersectPlane(self.__planePoint, self.__planeNormal))  
+    point = ray.pointFromFactor(ray.intersectPlane(self.__planePoint, self.__planeNormal))
+    
+    xfo = self.__parentXfo.clone()
+    point = point.subtract(xfo.tr).add(self.__parentOffset)
 
-    # choose the manipulation to perform
-    if self.__gizmoHandler == 'redLine':
+    # check for translation or orientation
+    if self.__gizmoHandler.endswith('Line'):
 
-      # move the transform
-      xfo = self.__parentXfo.clone()
-      xfo.tr = point.add(self.__parentOffset)
+      if self.__gizmoHandler == 'redLine':
+        xVec3 = Vec3(1.0, 0.0, 0.0)
+      elif self.__gizmoHandler == 'greenLine':
+        xVec3 = Vec3(0.0, 1.0, 0.0)
+      elif self.__gizmoHandler == 'blueLine':
+        xVec3 = Vec3(0.0, 0.0, 1.0)
+      
+      dotValue = point.dot(xVec3) 
+      xfo.tr = xfo.tr.add(xVec3.multiplyScalar(dotValue))
+    
+    elif self.__gizmoHandler.endswith('Circle'):
 
-      # set the transform in the DG
-      self.getDGNode().setData('localXfo', self.__bindingId, xfo)
+      if self.__gizmoHandler == 'redCircle':
+        xVec3 = Vec3(1.0, 0.0, 0.0)
+      elif self.__gizmoHandler == 'greenCircle':
+        xVec3 = Vec3(0.0, 1.0, 0.0)
+      elif self.__gizmoHandler == 'blueCircle':
+        xVec3 = Vec3(0.0, 0.0, 1.0)
+
+      xRad = xVec3.angleTo(self.__parentOffset)
+      xQuat = Quat().setFromAxisAndAngle(xVec3, xRad)
+      xfo.ori = xfo.ori.multiply(xQuat)
+
+    # move the transform
+    
+
+    # set the transform in the DG
+    self.getDGNode().setData('localXfo', self.__bindingId, xfo)
 
     return True

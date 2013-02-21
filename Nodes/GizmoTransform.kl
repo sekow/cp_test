@@ -20,9 +20,29 @@ operator gizmoTransformOp(
 
   // draw based on the mode
   if(mode == 0) {
-    Vec3 startPt = globalXfo.transformVector(Vec3(0, -5, 0));
-    Vec3 endPt = globalXfo.transformVector(Vec3(0, 5, 0));
-    gizmo.geometry.drawLine(startPt, endPt, Color(1.0, 0.0, 0.0, 1.0));
+    Vec3 startPt0 = globalXfo.transformVector(Vec3(0, 0, 0));
+    Vec3 endPt0 = globalXfo.transformVector(Vec3(3, 0, 0));
+    gizmo.geometry.drawLine(startPt0, endPt0, Color(1.0, 0.0, 0.0, 1.0));
     gizmo.endGizmo(globalXfo, 'redLine', index, 0);
+    Vec3 startPt1 = globalXfo.transformVector(Vec3(0, 0, 0));
+    Vec3 endPt1 = globalXfo.transformVector(Vec3(0, 3, 0));
+    gizmo.geometry.drawLine(startPt1, endPt1, Color(0.0, 1.0, 0.0, 1.0));
+    gizmo.endGizmo(globalXfo, 'greenLine', index, 0);
+    Vec3 startPt2 = globalXfo.transformVector(Vec3(0, 0, 0));
+    Vec3 endPt2 = globalXfo.transformVector(Vec3(0, 0, 3));
+    gizmo.geometry.drawLine(startPt2, endPt2, Color(0.0, 0.0, 1.0, 1.0));
+    gizmo.endGizmo(globalXfo, 'blueLine', index, 0);
+
+    Xfo circleXfo();
+    circleXfo.ori.setFromAxisAndAngle(Vec3(0.0,0.0,1.0), 1.571);
+    gizmo.geometry.drawCircle(globalXfo * circleXfo, 4 , Color(1.0, 0.0, 0.0, 1.0), 24);
+    gizmo.endGizmo(globalXfo, 'redCircle', index, 0);
+    circleXfo.ori.setFromAxisAndAngle(Vec3(1.0,0.0,0.0), 0.0);
+    gizmo.geometry.drawCircle(globalXfo * circleXfo, 4 , Color(0.0, 1.0, 0.0, 1.0), 24);
+    gizmo.endGizmo(globalXfo, 'greenCircle', index, 0);
+    circleXfo.ori.setFromAxisAndAngle(Vec3(1.0,0.0,0.0), 1.571);
+    gizmo.geometry.drawCircle(globalXfo * circleXfo, 4 , Color(0.0, 0.0, 1.0, 1.0), 24);
+    gizmo.endGizmo(globalXfo, 'blueCircle', index, 0);
+  
   }
 }
